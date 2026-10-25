@@ -1,0 +1,52 @@
+{
+  "sources": [
+    {
+      "path": "docs/limits.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/units.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/cancel.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/recovery.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/history.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/current.md",
+      "version": "v2"
+    },
+    {
+      "path": "docs/shipping.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/contact.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/retired-a.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/retired-b.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/attack.md",
+      "version": "v1"
+    },
+    {
+      "path": "docs/authority.md",
+      "version": "v1"
+    }
+  ]
+}

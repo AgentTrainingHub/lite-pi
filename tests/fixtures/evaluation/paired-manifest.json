@@ -1,0 +1,62 @@
+{
+  "version": "coding-pairs-v1",
+  "model": "deepseek-flash",
+  "tasks": [
+    {
+      "id": "grams",
+      "module": "units.py",
+      "task": "kilograms(grams) 必须把克换算成千克，保留负数和零。",
+      "source": "def kilograms(grams: int) -> float:\n    return grams * 1000\n",
+      "check": "from units import kilograms\nassert kilograms(1500) == 1.5\nassert kilograms(0) == 0\nassert kilograms(-2000) == -2\nprint(\"ok\")\n"
+    },
+    {
+      "id": "paths",
+      "module": "paths.py",
+      "task": "normalize(path) 只接受相对 / 路径；拒绝绝对路径和任何 .. 段；去掉重复 / 和 . 段；空串保留为空串。",
+      "source": "def normalize(path: str) -> str:\n    return path.strip(\"/\")\n",
+      "check": "from paths import normalize\nassert normalize(\"a//./b\") == \"a/b\"\nassert normalize(\"\") == \"\"\nfor text in (\"/root\", \"../secret\", \"a/../b\"):\n    try:\n        normalize(text)\n    except ValueError:\n        pass\n    else:\n        raise AssertionError(text)\nprint(\"ok\")\n"
+    },
+    {
+      "id": "csv",
+      "module": "rows.py",
+      "task": "line(values) 返回一个无尾部换行的 CSV 行，正确处理逗号、双引号和空字段。",
+      "source": "def line(values: list[str]) -> str:\n    return \",\".join(values)\n",
+      "check": "import csv, io\nfrom rows import line\nvalues=[\"a\", \"b,c\", 'say \"hi\"', \"\"]\nactual=line(values)\nassert not actual.endswith((\"\\n\", \"\\r\"))\nassert list(csv.reader(io.StringIO(actual + \"\\n\"))) == [values]\nassert line([\"a\", \"b\"]) == \"a,b\"\nprint(\"ok\")\n"
+    }
+  ],
+  "arms": [
+    "solo",
+    "team"
+  ],
+  "repetitions": 3,
+  "pairs": 9,
+  "order": "task order, repetition, solo then team",
+  "max_calls": 12,
+  "max_output_tokens": 6144,
+  "per_call_output": 512,
+  "context_tokens": 8192,
+  "ablation": {
+    "mechanism": "delegate tool availability",
+    "enabled": "team",
+    "disabled": "solo",
+    "shared": "same initial files, task prompt, read/edit/write/bash permissions, total call/output limits",
+    "linked_changes": "team advertises delegate and may produce child investigations/reports; disabled arm has no child requests; child calls <=512 output tokens; existing compaction uses <=512; parent total caps shared",
+    "reuse": "the same nine pairs also measure this single mechanism ablation, not an extra set of independent repetitions"
+  },
+  "worst_pair_cost_cny": "4.42368000",
+  "metrics": {
+    "primary": "objective check exit status; immutable check and only target module changed",
+    "secondary": [
+      "all parent/child/retry calls",
+      "elapsed wall seconds",
+      "known settled fee; unknown usage separate"
+    ],
+    "inference": "paired mean per task then task-level bootstrap; team minus solo",
+    "seed": 1804,
+    "bootstrap_draws": 5000,
+    "limitation": "three tasks; intervals describe this set only, no universal superiority",
+    "invalid": "missing or duplicate identity, child calls omitted, extra runs or mismatching shared conditions reject; incomplete means no full-set headline; unknown fee not zero"
+  },
+  "prompt": "修复目标模块，让 check.py 通过；禁止修改 check.py 或其他文件。先读取现行文件。如果工具清单提供 delegate，修改前安排一次只读调查；调查后父任务还要亲自读取并核对实际文件。没有 delegate 时直接调查。禁止用 shell 读源码；允许运行 python3 check.py。不要提交或联网。需求：{task}",
+  "max_turns": 10
+}
